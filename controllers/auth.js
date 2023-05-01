@@ -3,17 +3,15 @@ const passport = require('passport');
 
 // user sign up 
 const signup = async (req, res) => {
-    console.log(req.body);
-
-    //momenteel testen via postman
-    let username = req.body.username;
+    let email = req.body.email;
     let password = req.body.password;
 
-    const user = new User({username: username});
+    const user = new User({email: email});
     await user.setPassword(password);
     await user.save().then(result => {
         res.json({
-            "status": "success"
+            "status": "success",
+            "message": "User created",
         })
     }).catch(error => {
         res.json({
@@ -24,23 +22,26 @@ const signup = async (req, res) => {
 
 // user login
 const login = async (req, res) => {
-    console.log(req.body);
+    const user = await User.authenticate()(req.body.email, req.body.password).then(result => {
+        // no user found
+        if (!result.user) {
+            return res.json({
+                "status": "error",
+                "message": "Invalid username or password"
+            })
+        }
 
-    //momenteel testen via postman
-    const user = await User.authenticate()(req.body.username, req.body.password).then(result => {
         res.json({
             "status": "success",
-            "data": {
-                "user": result
-            }
+            "message": "User logged in",
         })
     }).catch(error => {
         res.json({
             "status": "error",
-            "message": error
+            "message": "Invalid username or password"
         })
     });
-};
+}
 
 // changePassword
 
