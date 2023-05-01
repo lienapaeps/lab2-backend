@@ -5,8 +5,10 @@ const passport = require('passport');
 const signup = async (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
+    // let firstname = req.body.firstname;
+    // let lastname = req.body.lastname;
 
-    const user = new User({email: email});
+    const user = new User({username: email});
     await user.setPassword(password);
     await user.save().then(result => {
         res.json({
@@ -15,7 +17,8 @@ const signup = async (req, res) => {
         })
     }).catch(error => {
         res.json({
-            "status": "error"
+            "status": "error",
+            "message": error
         })
     });
 };
@@ -27,7 +30,7 @@ const login = async (req, res) => {
         if (!result.user) {
             return res.json({
                 "status": "error",
-                "message": "Invalid username or password"
+                "message": "Invalid email or password"
             })
         }
 
@@ -38,7 +41,7 @@ const login = async (req, res) => {
     }).catch(error => {
         res.json({
             "status": "error",
-            "message": "Invalid username or password"
+            "message": "Invalid email or password"
         })
     });
 }
