@@ -23,9 +23,28 @@ const signup = async (req, res) => {
 };
 
 // user login
+const login = async (req, res) => {
+    console.log(req.body);
+
+    //momenteel testen via postman
+    const user = await User.authenticate()(req.body.username, req.body.password).then(result => {
+        res.json({
+            "status": "success",
+            "data": {
+                "user": result
+            }
+        })
+    }).catch(error => {
+        res.json({
+            "status": "error",
+            "message": error
+        })
+    });
+};
 
 // changePassword
 
 module.exports = {
-    signup
+    signup,
+    login
 };
