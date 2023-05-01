@@ -18,7 +18,7 @@ const signup = async (req, res) => {
     }).catch(error => {
         res.json({
             "status": "error",
-            "message": error
+            "message": "Er ging iets mis"
         })
     });
 };
