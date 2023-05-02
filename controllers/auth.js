@@ -5,10 +5,13 @@ const passport = require('passport');
 const signup = async (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
-    // let firstname = req.body.firstname;
-    // let lastname = req.body.lastname;
+    let firstname = req.body.firstname;
+    let lastname = req.body.lastname;
 
-    const user = new User({username: email});
+    const user = new User({email: email});
+    user.firstname = firstname;
+    user.lastname = lastname;
+
     await user.setPassword(password);
     await user.save().then(result => {
         res.json({
