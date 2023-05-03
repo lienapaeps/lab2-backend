@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
 // const passport = require('passport');
 
 // user sign up 
@@ -36,9 +37,18 @@ const signup = async (req, res) => {
                 "message": "Er ging iets mis"
             })
         } else {
+            // console.log(user._id);
+            // webtokens
+            let token = jwt.sign({
+                uid: user._id
+            }, "secret")
+
             res.json({
                 "status": "success",
                 "message": "Nieuwe gebruiker aangemaakt",
+                "data": {
+                    "token": token
+                }
             })
         }
     });  
