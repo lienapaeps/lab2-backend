@@ -5,21 +5,33 @@ const farmSchema = new Schema ({
     name: {
         type: String,
         required: true
+    },
+    street: {
+        type: String,
+        required: true
+    },
+    streetnumber: {
+        type: String,
+        required: true
+    },
+    postalcode: {
+        type: String,
+        required: true
+    },
+    city: {
+        type: String,
+        required: true
+    },
+    location: {
+        "latitude": {
+            type: Number,
+            required: true
+        },
+        "longitude": {
+            type: Number,
+            required: true
+        }
     }
-    // address: {
-    //     type: String,
-    //     required: true
-    // },
-    // location: {
-    //     type: [Number]
-    // },
-    // openinghours: {
-    //     type: String
-    // },
-    // fields: [{
-    //     type: Schema.Types.ObjectId,
-    //     ref: 'Field'
-    // }]
 })
 
 const Farm = mongoose.model('Farm', farmSchema);
