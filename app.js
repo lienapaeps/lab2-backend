@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const usersRouter = require('./routes/users');
+const farmsRouter = require('./routes/farms');
 
 // mongoose.set("useCreateIndex", true);
 mongoose.connect("mongodb://localhost:27017/plantenpluk", {
@@ -27,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors());
 app.use('/users', usersRouter);
+app.use('/farms', farmsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
