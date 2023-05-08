@@ -2,11 +2,14 @@ const express = require('express');
 const router = express.Router();
 const fieldsController = require("../../../controllers/api/v1/fields");
 
-// get all farms
+// get all fields
 router.get('/', fieldsController.getAll);
 
-// get farm by id
-// router.get('/:id', fieldsController.getById);
+// get all fields by farm id 
+router.get('/farm/:id', fieldsController.getByFarmId);
+
+// get field by id
+router.get('/:id', fieldsController.getById);
 
 // create farm
 router.post("/", fieldsController.create);
