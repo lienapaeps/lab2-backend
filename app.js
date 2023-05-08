@@ -9,6 +9,7 @@ const passport = require('./passport/passport');
 
 const usersRouter = require('./routes/users');
 const farmsRouter = require('./routes/api/v1/farms');
+const fieldsRouter = require('./routes/api/v1/fields');
 
 mongoose.connect("mongodb://localhost:27017/plantenpluk", {
   useNewUrlParser: true,
@@ -28,7 +29,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors());
 app.use('/users', usersRouter);
-app.use('/api/v1/farms', passport.authenticate('jwt', {session: false}) , farmsRouter);
+app.use('/api/v1/farms', farmsRouter);
+app.use('/api/v1/fields', fieldsRouter);
+// app.use('/api/v1/farms', passport.authenticate('jwt', {session: false}) , farmsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

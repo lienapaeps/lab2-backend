@@ -31,7 +31,19 @@ const farmSchema = new Schema ({
             type: Number,
             required: true
         }
-    }
+    },
+    polygon: [
+        {
+            "latitude": {
+                type: Number,
+                required: true
+            },
+            "longitude": {
+                type: Number,
+                required: true
+            }
+        }
+    ]
 })
 
 const Farm = mongoose.model('Farm', farmSchema);

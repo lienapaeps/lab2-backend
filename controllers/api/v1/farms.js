@@ -49,6 +49,7 @@ const create = (req, res) => {
     farm.postalcode = req.body.postalcode;
     farm.city = req.body.city;
     farm.location = req.body.location;
+    farm.polygon = req.body.polygon;
 
     farm.save()
         .then(doc => {
