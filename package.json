@@ -23,5 +23,5 @@
   "devDependencies": {
     "nodemon": "^2.0.22"
   },
-  "NODE_VERSION": "14.17.6"
+  "NODE_VERSION": "14.20.1"
 }
