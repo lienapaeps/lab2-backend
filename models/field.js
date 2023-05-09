@@ -3,10 +3,10 @@ const Schema = mongoose.Schema;
 const Farm = require('./farm');
 
 const fieldSchema = new Schema ({
-    farmId: [{
+    farmId: {
         type: Object,
         ref: Farm
-    }],
+    },
     name: {
         type: String,
         required: true
