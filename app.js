@@ -13,7 +13,7 @@ const usersRouter = require('./routes/users');
 const farmsRouter = require('./routes/api/v1/farms');
 const fieldsRouter = require('./routes/api/v1/fields');
 
-mongoose.connect("mongodb://localhost:27017/plantenpluk", {
+mongoose.connect("mongodb+srv://lienapaeps:znbZdT7RLZQaEA3Q@cluster0.cxxzmty.mongodb.net/?retryWrites=true&w=majority", {
   useNewUrlParser: true,
 })
 
