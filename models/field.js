@@ -8,10 +8,10 @@ const fieldSchema = new Schema ({
         type: Object,
         ref: Farm
     },
-    users: [{
+    owner: {
         type: Object,
         ref: User
-    }],
+    },
     name: {
         type: String,
         required: true
