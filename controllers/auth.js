@@ -93,9 +93,51 @@ const login = async (req, res) => {
     });
 }
 
-// changePassword
+// get all users
+const getAll = (req, res) => {
+    User.find()
+        .then(docs => {
+            res.json({
+                "status": "success",
+                "message": "Gebruikers gevonden",
+                "data": {
+                    "users": docs
+                }
+            })
+        })
+        .catch(err => {
+            res.json({
+                "status": "error",
+                "message": "Gebruikers niet gevonden",
+                "error": err
+            })
+        })
+}
+
+// get user by id
+const getUserById = async (req, res) => {
+    User.findById(req.params.id)
+        .then(doc => {
+            res.json({
+                "status": "success",
+                "message": "Gebruiker gevonden",
+                "data": {
+                    "user": doc
+                }
+            })
+        })
+        .catch(err => {
+            res.json({
+                "status": "error",
+                "message": "Gebruiker niet gevonden",
+                "error": err
+            })
+        })
+}
 
 module.exports = {
     signup,
-    login
+    login,
+    getAll,
+    getUserById
 };

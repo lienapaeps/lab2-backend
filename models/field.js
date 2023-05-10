@@ -1,18 +1,19 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Farm = require('./farm');
+const User = require('./user');
 
 const fieldSchema = new Schema ({
     farmId: {
         type: Object,
         ref: Farm
     },
+    users: [{
+        type: Object,
+        ref: User
+    }],
     name: {
         type: String,
-        required: true
-    },
-    owners: {
-        type: Array,
         required: true
     },
     size: {
