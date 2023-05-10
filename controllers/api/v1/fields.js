@@ -24,8 +24,7 @@ const create = (req, res) => {
     let field = new Field();
 
     field.name = req.body.name;
-    field.farmId = req.body.farmId
-    field.owners = req.body.owners;
+    field.users = req.body.users;
     field.size = req.body.size;
     field.crops = req.body.crops;
     field.polygon = req.body.polygon;

@@ -23,22 +23,22 @@ const farmSchema = new Schema ({
         required: true
     },
     location: {
-        "latitude": {
+        "lat": {
             type: Number,
             required: true
         },
-        "longitude": {
+        "lng": {
             type: Number,
             required: true
         }
     },
     polygon: [
         {
-            "latitude": {
+            "lat": {
                 type: Number,
                 required: true
             },
-            "longitude": {
+            "lng": {
                 type: Number,
                 required: true
             }

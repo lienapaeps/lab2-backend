@@ -26,11 +26,11 @@ const fieldSchema = new Schema ({
     },
     polygon: [
         {
-            "latitude": {
+            "lat": {
                 type: Number,
                 required: true
             },
-            "longitude": {
+            "lng": {
                 type: Number,
                 required: true
             }
