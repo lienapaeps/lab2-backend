@@ -48,6 +48,7 @@ const create = (req, res) => {
     farm.streetnumber = req.body.streetnumber;
     farm.postalcode = req.body.postalcode;
     farm.city = req.body.city;
+    farm.phonenumber = req.body.phonenumber;
     farm.location = req.body.location;
     farm.polygon = req.body.polygon;
 
