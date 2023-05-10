@@ -1,0 +1,8 @@
+{
+    "Database": {
+        "conn": "mongodb+srv://lienapaeps:znbZdT7RLZQaEA3Q@cluster0.cxxzmty.mongodb.net/?retryWrites=true&w=majority"
+    },
+    "jwt": {
+        "secret": "secret"
+    }
+}
