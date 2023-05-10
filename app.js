@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const passport = require('./passport/passport');
+const config = require('config');
 
 const indexRouter = require('./routes/index');
 // const usersRouter = require('./routes/users');
@@ -13,7 +15,11 @@ const usersRouter = require('./routes/users');
 const farmsRouter = require('./routes/api/v1/farms');
 const fieldsRouter = require('./routes/api/v1/fields');
 
-mongoose.connect("mongodb+srv://lienapaeps:znbZdT7RLZQaEA3Q@cluster0.cxxzmty.mongodb.net/?retryWrites=true&w=majority", {
+// mongodb+srv://lienapaeps:znbZdT7RLZQaEA3Q@cluster0.cxxzmty.mongodb.net/?retryWrites=true&w=majority
+
+// mongodb://localhost:27017/plantenpluk
+
+mongoose.connect(config.get("Database.conn"), {
   useNewUrlParser: true,
 })
 
@@ -32,8 +38,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/api/v1/farms', farmsRouter);
-app.use('/api/v1/fields', fieldsRouter);
+app.use('/api/v1/fields', passport.authenticate('jwt', {session: false}), fieldsRouter);
+app.use('/api/v1/farms', passport.authenticate('jwt', {session: false}), farmsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

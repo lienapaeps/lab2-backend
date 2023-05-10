@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
+const config = require('config');
 // const passport = require('passport');
 
 // user sign up 
@@ -41,7 +42,7 @@ const signup = async (req, res) => {
             // webtokens
             let token = jwt.sign({
                 uid: user._id
-            }, "secret")
+            }, config.get('jwt.secret'))
 
             res.json({
                 "status": "success",
@@ -70,10 +71,19 @@ const login = async (req, res) => {
                 "message": "E-mail of wachtwoord is onjuist"
             })
         }
+
+        // webtokens
+        let token = jwt.sign({
+            uid: result.user._id
+        }, config.get('jwt.secret'))
+
         // gebruiker gevonden en wachtwoord juist
         res.json({
             "status": "success",
             "message": "Gebruiker is ingelogd",
+            "data": {
+                "token": token
+            }
         })
     }).catch(error => {
         res.json({
