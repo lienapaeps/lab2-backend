@@ -35,7 +35,9 @@ const create = (req, res) => {
                 "status": "success",
                 "message": "Veld is toegevoegd",
                 "data": {
-                    "field": doc
+                    "field": doc,
+                    "user": req.user._id,
+                    "farm": req.body.farmId
                 }
             })
         })
