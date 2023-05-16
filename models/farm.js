@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const farmSchema = new Schema ({
+    user: String,
     name: {
         type: String,
         required: true
