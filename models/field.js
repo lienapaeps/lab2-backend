@@ -10,7 +10,12 @@ const fieldSchema = new Schema ({
     },
     owner: {
         type: Object,
-        ref: User
+        ref: User,
+        required: false
+    },
+    available: {
+        type: Boolean,
+        required: true
     },
     name: {
         type: String,

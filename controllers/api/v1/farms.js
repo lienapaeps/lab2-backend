@@ -40,9 +40,32 @@ const getById = (req, res) => {
         })
 }
 
+const getByUserId = (req, res) => {
+    Farm.find({
+        user: req.user._id
+    })
+    .then(docs => {
+        res.json({
+            "status": "success",
+            "message": "Boerderijen gevonden",
+            "data": {
+                "farms": docs
+            }
+        })
+    })
+    .catch(err => {
+        res.json({
+            "status": "error",
+            "message": "Boerderijen niet gevonden",
+            "error": err
+        })
+    })
+}
+
 const create = (req, res) => {
     let farm = new Farm();
 
+    farm.user = req.user._id;
     farm.name = req.body.name;
     farm.street = req.body.street;
     farm.streetnumber = req.body.streetnumber;
@@ -74,3 +97,4 @@ const create = (req, res) => {
 module.exports.getAll = getAll;
 module.exports.getById = getById;
 module.exports.create = create;
+module.exports.getByUserId = getByUserId;

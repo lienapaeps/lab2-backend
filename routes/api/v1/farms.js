@@ -11,6 +11,9 @@ router.get('/:id', farmsController.getById);
 // create farm
 router.post("/", farmsController.create);
 
+// get farm by user id
+router.get('/user/:id', farmsController.getByUserId);
+
 // update farm by id
 // router.put('/:id', farmsController.update);
 
