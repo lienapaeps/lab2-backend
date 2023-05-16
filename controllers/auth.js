@@ -75,8 +75,8 @@ const login = async (req, res) => {
 
         // webtokens
         let token = jwt.sign({
-            uid: result._id,
-            firstname: result.firstname,
+            uid: result.user._id,
+            firstname: result.user.firstname,
         }, config.get('jwt.secret'))
 
         // gebruiker gevonden en wachtwoord juist
