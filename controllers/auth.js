@@ -42,7 +42,6 @@ const signup = async (req, res) => {
             // webtokens
             let token = jwt.sign({
                 uid: user._id,
-                email: user.email,
                 firstname: user.firstname,
             }, config.get('jwt.secret'))
 
@@ -77,7 +76,6 @@ const login = async (req, res) => {
         // webtokens
         let token = jwt.sign({
             uid: user._id,
-            email: user.email,
             firstname: user.firstname,
         }, config.get('jwt.secret'))
 
@@ -92,7 +90,8 @@ const login = async (req, res) => {
     }).catch(error => {
         res.json({
             "status": "error",
-            "message": "Er ging iets mis"
+            "message": "Er ging iets mis",
+            "error": error
         })
     });
 }
