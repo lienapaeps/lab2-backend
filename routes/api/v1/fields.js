@@ -11,13 +11,13 @@ router.get('/farm/:id', fieldsController.getByFarmId);
 // get field by id
 router.get('/:id', fieldsController.getById);
 
-// create farm
+// create field
 router.post("/", fieldsController.create);
 
-// update farm by id
-// router.put('/:id', farmsController.update);
+// update field by id
+router.put('/:id', fieldsController.update); 
 
-// delete farm by id
-// router.delete('/:id', farmsController.remove);
+// delete field by id
+// router.delete('/:id', fieldController.remove);
 
 module.exports = router;

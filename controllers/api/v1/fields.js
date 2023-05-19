@@ -24,7 +24,7 @@ const create = (req, res) => {
     let field = new Field();
 
     field.farmId = req.body.farmId;
-    farm.owner = req.user._id;
+    field.owner = null;
     field.available = true;
     field.name = req.body.name;
     field.size = req.body.size;
@@ -37,9 +37,7 @@ const create = (req, res) => {
                 "status": "success",
                 "message": "Veld is toegevoegd",
                 "data": {
-                    "field": doc,
-                    "user": req.user._id,
-                    "farm": req.body.farmId
+                    "field": doc
                 }
             })
         })
@@ -51,6 +49,36 @@ const create = (req, res) => {
             })
         })
 };
+
+const update = (req, res) => {
+    // let owner = req.user._id;
+
+    let fieldId = req.params.id;
+
+    Field.findOneAndUpdate({
+        _id: fieldId,
+    }, {
+        $addToSet: {
+            owner: req.user._id
+        }
+    }, {
+        new: true
+    }).then(doc => {
+        res.json({
+            "status": "success",
+            "message": "Veld is geupdate",
+            "data": {
+                field: doc
+            }
+        })
+    }).catch(err => {
+        res.json({
+            "status": "error",
+            "message": "Veld kon niet worden geupdate",
+            "error": err
+        })
+    })
+}
 
 const getById = (req, res) => {
     Field.findOne({ _id: req.params.id })
@@ -98,3 +126,4 @@ module.exports.getAll = getAll;
 module.exports.create = create;
 module.exports.getById = getById;
 module.exports.getByFarmId = getByFarmId;
+module.exports.update = update;
