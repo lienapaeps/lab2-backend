@@ -24,7 +24,8 @@ const create = (req, res) => {
     let field = new Field();
 
     field.farmId = req.body.farmId;
-    field.owner = null;
+    // default owner is empty
+    field.owner = [];
     field.available = true;
     field.name = req.body.name;
     field.size = req.body.size;
