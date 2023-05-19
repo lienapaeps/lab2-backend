@@ -18,6 +18,6 @@ router.post("/", fieldsController.create);
 router.put('/:id', fieldsController.update); 
 
 // delete field by id
-// router.delete('/:id', fieldController.remove);
+router.delete('/:id', fieldsController.remove);
 
 module.exports = router;

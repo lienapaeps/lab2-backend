@@ -84,6 +84,27 @@ const update = (req, res) => {
     })
 }
 
+const remove = (req, res) => {
+    let fieldId = req.params.id;
+
+    Field.findOneAndDelete({
+        _id: fieldId
+    }).then(doc => {
+        res.json({
+            "status": "success",
+            "message": "Veld is verwijderd",
+            "data": {
+                field: doc
+            }
+        })
+    }).catch(err => {
+        res.json({
+            "status": "error",
+            "message": "Veld kon niet worden verwijderd",
+        })
+    })
+}
+
 const getById = (req, res) => {
     Field.findOne({ _id: req.params.id })
         .then(doc => {
@@ -131,3 +152,4 @@ module.exports.create = create;
 module.exports.getById = getById;
 module.exports.getByFarmId = getByFarmId;
 module.exports.update = update;
+module.exports.remove = remove;
