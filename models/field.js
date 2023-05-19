@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Farm = require('./farm');
-const User = require('./user');
 
 const fieldSchema = new Schema ({
     farmId: {
@@ -9,13 +8,10 @@ const fieldSchema = new Schema ({
         ref: Farm
     },
     owner: {
-        type: Object,
-        ref: User,
-        required: false
+        String
     },
     available: {
-        type: Boolean,
-        required: true
+        type: Boolean
     },
     name: {
         type: String,
@@ -29,18 +25,18 @@ const fieldSchema = new Schema ({
         type: Array,
         required: true
     },
-    polygon: [
-        {
-            "lat": {
-                type: Number,
-                required: true
-            },
-            "lng": {
-                type: Number,
-                required: true
-            }
-        }
-    ]
+    // polygon: [
+    //     {
+    //         "lat": {
+    //             type: Number,
+    //             required: true
+    //         },
+    //         "lng": {
+    //             type: Number,
+    //             required: true
+    //         }
+    //     }
+    // ]
 })
 
 const Field = mongoose.model('Field', fieldSchema);

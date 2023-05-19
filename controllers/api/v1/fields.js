@@ -23,11 +23,13 @@ const getAll = (req, res) => {
 const create = (req, res) => {
     let field = new Field();
 
+    field.farmId = req.body.farmId;
+    farm.owner = req.user._id;
+    field.available = true;
     field.name = req.body.name;
-    field.owner = req.body.owner;
     field.size = req.body.size;
     field.crops = req.body.crops;
-    field.polygon = req.body.polygon;
+    // field.polygon = req.body.polygon;
 
     field.save()
         .then(doc => {
