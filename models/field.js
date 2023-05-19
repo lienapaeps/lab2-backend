@@ -4,8 +4,7 @@ const Farm = require('./farm');
 
 const fieldSchema = new Schema ({
     farmId: {
-        type: Schema.Types.ObjectId,
-        ref: Farm
+        type: String
     },
     owner: [ {
         id: {
