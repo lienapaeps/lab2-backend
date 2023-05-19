@@ -59,7 +59,10 @@ const update = (req, res) => {
         _id: fieldId,
     }, {
         $addToSet: {
-            owner: req.user._id
+            owner: {
+                id: req.user._id,
+                name: req.user.firstname
+            }
         }
     }, {
         new: true
