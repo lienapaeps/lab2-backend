@@ -148,10 +148,10 @@ const getByFarmId = (req, res) => {
 }
 
 const getByUserId = (req, res) => {
+        const userId = req.params.id;
         // get all fields by user id
         Field.find({ 
-            // vind alle velden waarvan de user id in de owner array staat
-            owner: req.params.id
+            owner: { $elemMatch: { id: userId } }
          })
         .then(docs => {
             res.json({

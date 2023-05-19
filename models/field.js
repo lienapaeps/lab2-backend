@@ -4,13 +4,19 @@ const Farm = require('./farm');
 
 const fieldSchema = new Schema ({
     farmId: {
-        type: Object,
+        type: Schema.Types.ObjectId,
         ref: Farm
     },
-    owner: {
-        type: Array,
-        maxlength: 3
-    },
+    owner: [ {
+        id: {
+            type: Schema.Types.ObjectId,
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        }
+    }],
     available: {
         type: Boolean
     },
