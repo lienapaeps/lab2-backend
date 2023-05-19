@@ -147,9 +147,32 @@ const getByFarmId = (req, res) => {
         })
 }
 
+const getByUserId = (req, res) => {
+        // get all fields by user id
+        Field.find({ user: req.user._id })
+        .then(docs => {
+            res.json({
+                "status": "success",
+                "message": "Velden gevonden",
+                "data": {
+                    "fields": docs
+                }
+            })
+        }
+        )
+        .catch(err => {
+            res.json({
+                "status": "error",
+                "message": "Velden niet gevonden",
+                "error": err
+            })
+        })
+}
+
 module.exports.getAll = getAll;
 module.exports.create = create;
 module.exports.getById = getById;
 module.exports.getByFarmId = getByFarmId;
 module.exports.update = update;
 module.exports.remove = remove;
+module.exports.getByUserId = getByUserId;

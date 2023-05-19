@@ -11,6 +11,9 @@ router.get('/farm/:id', fieldsController.getByFarmId);
 // get field by id
 router.get('/:id', fieldsController.getById);
 
+// get field by user id
+router.get('/user/:id', fieldsController.getByUserId);
+
 // create field
 router.post("/", fieldsController.create);
 
