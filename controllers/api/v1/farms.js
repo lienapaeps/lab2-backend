@@ -74,6 +74,7 @@ const create = (req, res) => {
     farm.phonenumber = req.body.phonenumber;
     farm.location = req.body.location;
     farm.polygon = req.body.polygon;
+    farm.crops = req.body.crops;
 
     farm.save()
         .then(doc => {
