@@ -48,11 +48,7 @@ const farmSchema = new Schema ({
                 required: true
             }
         }
-    ],
-    crops: {
-        type: Array,
-        required: true
-    },
+    ]
 })
 
 const Farm = mongoose.model('Farm', farmSchema);
