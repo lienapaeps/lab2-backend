@@ -95,12 +95,12 @@ const update = (req, res) => {
             if (existingField.owner.length >= 3) {
                 res.json({
                     "status": "error",
-                    "message": "Het maximum aantal gebruikers is al bereikt voor dit veld"
+                    "message": "Het maximum aantal gebruikers is al bereikt voor dit veld."
                 });
             } else if (existingField.owner.some(user => user.id === userId)) {
                 res.json({
                     "status": "error",
-                    "message": "De gebruiker bestaat al in het veld"
+                    "message": "Je hebt dit veld al gehuurd."
                 });
             } else {
                 Field.findOneAndUpdate(
@@ -121,7 +121,7 @@ const update = (req, res) => {
                 ).then(doc => {
                     res.json({
                         "status": "success",
-                        "message": "Veld is geupdate",
+                        "message": "Je hebt het veld succesvol gehuurd.",
                         "data": {
                             field: doc
                         }
@@ -129,7 +129,7 @@ const update = (req, res) => {
                 }).catch(err => {
                     res.json({
                         "status": "error",
-                        "message": "Veld kon niet worden geupdate",
+                        "message": "Veld kon niet worden gehuurd.",
                         "error": err
                     });
                 });
@@ -137,13 +137,13 @@ const update = (req, res) => {
         } else {
             res.json({
                 "status": "error",
-                "message": "Veld kon niet worden gevonden"
+                "message": "Veld kon niet worden gevonden."
             });
         }
     }).catch(err => {
         res.json({
             "status": "error",
-            "message": "Veld kon niet worden gevonden",
+            "message": "Veld kon niet worden gevonden.",
             "error": err
         });
     });
