@@ -51,6 +51,125 @@ const create = (req, res) => {
         })
 };
 
+// const update = (req, res) => {
+//     // let owner = req.user._id;
+
+//     let fieldId = req.params.id;
+
+//     Field.findOneAndUpdate({
+//         _id: fieldId,
+//     }, {
+//         $addToSet: {
+//             owner: {
+//                 id: req.user._id,
+//                 name: req.user.firstname
+//             }
+//         }
+//     }, {
+//         new: true
+//     }).then(doc => {
+//         res.json({
+//             "status": "success",
+//             "message": "Veld is geupdate",
+//             "data": {
+//                 field: doc
+//             }
+//         })
+//     }).catch(err => {
+//         res.json({
+//             "status": "error",
+//             "message": "Veld kon niet worden geupdate",
+//             "error": err
+//         })
+//     })
+// }
+
+const update = (req, res) => {
+    let fieldId = req.params.id;
+    let userId = req.user._id;
+
+    Field.findOne({
+        _id: fieldId
+    }).then(existingField => {
+        if (existingField) {
+            if (existingField.owner.length >= 3) {
+                res.json({
+                    "status": "error",
+                    "message": "Het maximum aantal gebruikers is al bereikt voor dit veld"
+                });
+            } else if (existingField.owner.some(user => user.id === userId)) {
+                res.json({
+                    "status": "error",
+                    "message": "De gebruiker bestaat al in het veld"
+                });
+            } else {
+                Field.findOneAndUpdate(
+                    {
+                        _id: fieldId
+                    },
+                    {
+                        $addToSet: {
+                            owner: {
+                                id: userId,
+                                name: req.user.firstname
+                            }
+                        }
+                    },
+                    {
+                        new: true
+                    }
+                ).then(doc => {
+                    res.json({
+                        "status": "success",
+                        "message": "Veld is geupdate",
+                        "data": {
+                            field: doc
+                        }
+                    });
+                }).catch(err => {
+                    res.json({
+                        "status": "error",
+                        "message": "Veld kon niet worden geupdate",
+                        "error": err
+                    });
+                });
+            }
+        } else {
+            res.json({
+                "status": "error",
+                "message": "Veld kon niet worden gevonden"
+            });
+        }
+    }).catch(err => {
+        res.json({
+            "status": "error",
+            "message": "Veld kon niet worden gevonden",
+            "error": err
+        });
+    });
+}
+
+const remove = (req, res) => {
+    let fieldId = req.params.id;
+
+    Field.findOneAndDelete({
+        _id: fieldId
+    }).then(doc => {
+        res.json({
+            "status": "success",
+            "message": "Veld is verwijderd",
+            "data": {
+                field: doc
+            }
+        })
+    }).catch(err => {
+        res.json({
+            "status": "error",
+            "message": "Veld kon niet worden verwijderd",
+        })
+    })
+}
+
 const getById = (req, res) => {
     Field.findOne({ _id: req.params.id })
         .then(doc => {
