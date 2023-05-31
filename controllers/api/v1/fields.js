@@ -23,11 +23,14 @@ const getAll = (req, res) => {
 const create = (req, res) => {
     let field = new Field();
 
+    field.farmId = req.body.farmId;
+    // default owner is empty
+    field.owner = [];
+    field.available = true;
     field.name = req.body.name;
-    field.owner = req.body.owner;
     field.size = req.body.size;
     field.crops = req.body.crops;
-    field.polygon = req.body.polygon;
+    // field.polygon = req.body.polygon;
 
     field.save()
         .then(doc => {
@@ -35,9 +38,7 @@ const create = (req, res) => {
                 "status": "success",
                 "message": "Veld is toegevoegd",
                 "data": {
-                    "field": doc,
-                    "user": req.user._id,
-                    "farm": req.body.farmId
+                    "field": doc
                 }
             })
         })
@@ -49,6 +50,125 @@ const create = (req, res) => {
             })
         })
 };
+
+// const update = (req, res) => {
+//     // let owner = req.user._id;
+
+//     let fieldId = req.params.id;
+
+//     Field.findOneAndUpdate({
+//         _id: fieldId,
+//     }, {
+//         $addToSet: {
+//             owner: {
+//                 id: req.user._id,
+//                 name: req.user.firstname
+//             }
+//         }
+//     }, {
+//         new: true
+//     }).then(doc => {
+//         res.json({
+//             "status": "success",
+//             "message": "Veld is geupdate",
+//             "data": {
+//                 field: doc
+//             }
+//         })
+//     }).catch(err => {
+//         res.json({
+//             "status": "error",
+//             "message": "Veld kon niet worden geupdate",
+//             "error": err
+//         })
+//     })
+// }
+
+const update = (req, res) => {
+    let fieldId = req.params.id;
+    let userId = req.user._id;
+
+    Field.findOne({
+        _id: fieldId
+    }).then(existingField => {
+        if (existingField) {
+            if (existingField.owner.length >= 3) {
+                res.json({
+                    "status": "error",
+                    "message": "Het maximum aantal gebruikers is al bereikt voor dit veld"
+                });
+            } else if (existingField.owner.some(user => user.id === userId)) {
+                res.json({
+                    "status": "error",
+                    "message": "De gebruiker bestaat al in het veld"
+                });
+            } else {
+                Field.findOneAndUpdate(
+                    {
+                        _id: fieldId
+                    },
+                    {
+                        $addToSet: {
+                            owner: {
+                                id: userId,
+                                name: req.user.firstname
+                            }
+                        }
+                    },
+                    {
+                        new: true
+                    }
+                ).then(doc => {
+                    res.json({
+                        "status": "success",
+                        "message": "Veld is geupdate",
+                        "data": {
+                            field: doc
+                        }
+                    });
+                }).catch(err => {
+                    res.json({
+                        "status": "error",
+                        "message": "Veld kon niet worden geupdate",
+                        "error": err
+                    });
+                });
+            }
+        } else {
+            res.json({
+                "status": "error",
+                "message": "Veld kon niet worden gevonden"
+            });
+        }
+    }).catch(err => {
+        res.json({
+            "status": "error",
+            "message": "Veld kon niet worden gevonden",
+            "error": err
+        });
+    });
+}
+
+const remove = (req, res) => {
+    let fieldId = req.params.id;
+
+    Field.findOneAndDelete({
+        _id: fieldId
+    }).then(doc => {
+        res.json({
+            "status": "success",
+            "message": "Veld is verwijderd",
+            "data": {
+                field: doc
+            }
+        })
+    }).catch(err => {
+        res.json({
+            "status": "error",
+            "message": "Veld kon niet worden verwijderd",
+        })
+    })
+}
 
 const getById = (req, res) => {
     Field.findOne({ _id: req.params.id })
@@ -92,7 +212,35 @@ const getByFarmId = (req, res) => {
         })
 }
 
+const getByUserId = (req, res) => {
+        const userId = req.params.id;
+        // get all fields by user id
+        Field.find({ 
+            owner: { $elemMatch: { id: userId } }
+         })
+        .then(docs => {
+            res.json({
+                "status": "success",
+                "message": "Velden gevonden",
+                "data": {
+                    "fields": docs
+                }
+            })
+        }
+        )
+        .catch(err => {
+            res.json({
+                "status": "error",
+                "message": "Velden niet gevonden",
+                "error": err
+            })
+        })
+}
+
 module.exports.getAll = getAll;
 module.exports.create = create;
 module.exports.getById = getById;
 module.exports.getByFarmId = getByFarmId;
+module.exports.update = update;
+module.exports.remove = remove;
+module.exports.getByUserId = getByUserId;
