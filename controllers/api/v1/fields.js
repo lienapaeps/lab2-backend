@@ -29,8 +29,7 @@ const create = (req, res) => {
     field.available = true;
     field.name = req.body.name;
     field.size = req.body.size;
-    field.crops = req.body.crops;
-    // field.polygon = req.body.polygon;
+    field.crops = [];
 
     field.save()
         .then(doc => {
@@ -50,39 +49,6 @@ const create = (req, res) => {
             })
         })
 };
-
-// const update = (req, res) => {
-//     // let owner = req.user._id;
-
-//     let fieldId = req.params.id;
-
-//     Field.findOneAndUpdate({
-//         _id: fieldId,
-//     }, {
-//         $addToSet: {
-//             owner: {
-//                 id: req.user._id,
-//                 name: req.user.firstname
-//             }
-//         }
-//     }, {
-//         new: true
-//     }).then(doc => {
-//         res.json({
-//             "status": "success",
-//             "message": "Veld is geupdate",
-//             "data": {
-//                 field: doc
-//             }
-//         })
-//     }).catch(err => {
-//         res.json({
-//             "status": "error",
-//             "message": "Veld kon niet worden geupdate",
-//             "error": err
-//         })
-//     })
-// }
 
 const update = (req, res) => {
     let fieldId = req.params.id;

@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const Crop = require("./crop");
+
 const fieldSchema = new Schema ({
     farmId: {
         type: String
@@ -26,10 +28,10 @@ const fieldSchema = new Schema ({
         type: Number,
         required: true
     },
-    crops: {
-        type: Array,
-        // required: true
-    },
+    crops: [ {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Crop',
+    }],
 })
 
 const Field = mongoose.model('Field', fieldSchema);

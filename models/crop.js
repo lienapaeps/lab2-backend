@@ -1,0 +1,41 @@
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const cropsSchema = new Schema ({
+    name: {
+        type: String,
+        required: true
+    },
+    plantingDate: {
+        type: Date
+    },
+    harvestDate: {
+        type: Date
+    },
+    fieldId: {
+        type: String
+    },
+    // farmId: {
+    //     type: String
+    // },
+})
+
+cropsSchema.virtual('growthStage').get(function () {
+    const currentDate = new Date();
+    const plantingDate = this.plantingDate;
+    const harvestDate = this.harvestDate;
+  
+    if (!plantingDate || !harvestDate) {
+      return 0; // Als plantingDate of harvestDate niet is ingesteld, is de groeifase 0%
+    }
+  
+    const totalDuration = harvestDate - plantingDate;
+    const progress = Math.min(Math.max(currentDate - plantingDate, 0), totalDuration);
+    const percentage = (progress / totalDuration) * 100;
+  
+    return Math.round(percentage); // Afgerond percentage van de groeifase
+  });
+
+const Crop = mongoose.model('Crop', cropsSchema);
+
+module.exports = Crop;

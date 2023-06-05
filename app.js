@@ -14,6 +14,7 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const farmsRouter = require('./routes/api/v1/farms');
 const fieldsRouter = require('./routes/api/v1/fields');
+const cropsRouter = require('./routes/api/v1/crops');
 
 // mongodb+srv://lienapaeps:znbZdT7RLZQaEA3Q@cluster0.cxxzmty.mongodb.net/?retryWrites=true&w=majority
 
@@ -40,6 +41,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/v1/fields', passport.authenticate('jwt', {session: false}), fieldsRouter);
 app.use('/api/v1/farms', passport.authenticate('jwt', {session: false}), farmsRouter);
+app.use('/api/v1/crops', passport.authenticate('jwt', {session: false}), cropsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
