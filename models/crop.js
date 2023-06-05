@@ -7,10 +7,12 @@ const cropsSchema = new Schema ({
         required: true
     },
     plantingDate: {
-        type: Date
+        type: Date,
+        default: null
     },
     harvestDate: {
-        type: Date
+        type: Date,
+        default: null
     },
     fieldId: {
         type: String
