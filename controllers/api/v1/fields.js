@@ -54,6 +54,7 @@ const create = (req, res) => {
 const update = (req, res) => {
     let fieldId = req.params.id;
     let userId = req.user._id;
+    let cropId = req.body.cropId;
 
     Field.findOne({
         _id: fieldId
@@ -70,33 +71,54 @@ const update = (req, res) => {
                     "message": "Je hebt dit veld al gehuurd."
                 });
             } else {
-                Field.findOneAndUpdate(
-                    {
-                        _id: fieldId
-                    },
-                    {
-                        $addToSet: {
-                            owner: {
-                                id: userId,
-                                name: req.user.firstname
+                Crop.findById(cropId).then(existingCrop => {
+                    if (existingCrop) {
+                        Field.findOneAndUpdate(
+                            {
+                                _id: fieldId
+                            },
+                            {
+                                $addToSet: {
+                                    owner: {
+                                        id: userId,
+                                        name: req.user.firstname
+                                    }
+                                },
+                                $push: {
+                                    plannedCrops: {
+                                        _id: existingCrop._id,
+                                        name: existingCrop.name
+                                    }
+                                }
+                            },
+                            {
+                                new: true
                             }
-                        }
-                    },
-                    {
-                        new: true
+                        ).then(doc => {
+                            res.json({
+                                "status": "success",
+                                "message": "Je hebt het veld succesvol gehuurd.",
+                                "data": {
+                                    field: doc
+                                }
+                            });
+                        }).catch(err => {
+                            res.json({
+                                "status": "error",
+                                "message": "Veld kon niet worden gehuurd.",
+                                "error": err
+                            });
+                        });
+                    } else {
+                        res.json({
+                            "status": "error",
+                            "message": "Geselecteerde crop kon niet worden gevonden."
+                        });
                     }
-                ).then(doc => {
-                    res.json({
-                        "status": "success",
-                        "message": "Je hebt het veld succesvol gehuurd.",
-                        "data": {
-                            field: doc
-                        }
-                    });
                 }).catch(err => {
                     res.json({
                         "status": "error",
-                        "message": "Veld kon niet worden gehuurd.",
+                        "message": "Geselecteerde crop kon niet worden gevonden.",
                         "error": err
                     });
                 });
