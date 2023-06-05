@@ -30,6 +30,7 @@ const create = (req, res) => {
     field.name = req.body.name;
     field.size = req.body.size;
     field.crops = [];
+    field.plannedCrops = [];
 
     field.save()
         .then(doc => {

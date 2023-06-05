@@ -37,7 +37,17 @@ const fieldSchema = new Schema ({
             type: String,
             // required: true
         }
-      }]
+    }],
+    plannedCrops: [{
+        _id: {
+            type: Schema.Types.ObjectId,
+            ref: 'Crop'
+        },
+        name: {
+            type: String,
+            // required: true
+        }
+    }]
 })
 
 const Field = mongoose.model('Field', fieldSchema);
