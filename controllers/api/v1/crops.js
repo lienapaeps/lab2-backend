@@ -25,8 +25,7 @@ const create = (req, res) => {
     let crop = new Crop();
 
     crop.name = req.body.name;
-    crop.plantingDate = req.body.plantingDate;
-    crop.harvestDate = req.body.harvestDate;
+    //planting date and harvest date are not required
     crop.fieldId = req.body.fieldId;
     // crop.farmId = req.body.farmId;
 
