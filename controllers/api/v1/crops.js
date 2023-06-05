@@ -21,40 +21,87 @@ const getAll = (req, res) => {
         })
 }
 
+// const create = (req, res) => {
+
+//     let crop = new Crop();
+
+//     crop.name = req.body.name;
+//     //planting date and harvest date are not required
+//     crop.fieldId = req.body.fieldId;
+//     // crop.farmId = req.body.farmId;
+
+//     crop.save()
+//         .then(doc => {
+//             return Field.findById(req.body.fieldId);
+//         })
+//         .then(field => {
+//             field.crops.push(crop._id);
+//             return field.save();
+//         })
+//         .then(updatedField => {
+//             res.json({
+//                 "status": "success",
+//                 "message": "Gewas is toegevoegd en Field is bijgewerkt",
+//                 "data": {
+//                     "crop": crop,
+//                     "field": updatedField
+//                 }
+//             });
+//         })
+//         .catch(err => {
+//             res.json({
+//                 "status": "error",
+//                 "message": "Gewas kon niet worden toegevoegd",
+//                 "error": err
+//             });
+//         });
+// };
+
 const create = (req, res) => {
-    let crop = new Crop();
-
-    crop.name = req.body.name;
-    //planting date and harvest date are not required
-    crop.fieldId = req.body.fieldId;
-    // crop.farmId = req.body.farmId;
-
-    crop.save()
+    const crops = req.body.crops; // Ontvang de array met gewassen uit de payload
+  
+    const promises = crops.map(cropData => {
+      const crop = new Crop();
+      crop.name = cropData.name;
+      crop.fieldId = cropData.fieldId;
+  
+      return crop.save()
         .then(doc => {
-            return Field.findById(req.body.fieldId);
+          return Field.findById(cropData.fieldId);
         })
         .then(field => {
-            field.crops.push(crop._id);
-            return field.save();
+          field.crops.push(crop._id);
+          return field.save();
         })
         .then(updatedField => {
-            res.json({
-                "status": "success",
-                "message": "Gewas is toegevoegd en Field is bijgewerkt",
-                "data": {
-                    "crop": crop,
-                    "field": updatedField
-                }
-            });
+          return {
+            crop: crop,
+            field: updatedField
+          };
         })
         .catch(err => {
-            res.json({
-                "status": "error",
-                "message": "Gewas kon niet worden toegevoegd",
-                "error": err
-            });
+          throw err; // Laat de fout doorwerken naar de buitenste catch-blok
         });
-};
+    });
+  
+    Promise.all(promises)
+      .then(results => {
+        res.json({
+          "status": "success",
+          "message": "Gewassen zijn toegevoegd en Fields zijn bijgewerkt",
+          "data": results
+        });
+      })
+      .catch(err => {
+        res.json({
+          "status": "error",
+          "message": "Gewassen konden niet worden toegevoegd",
+          "error": err
+        });
+      });
+  };
+  
+ 
 
 const getById = (req, res) => {
     Crop.findOne({ _id: req.params.id })
