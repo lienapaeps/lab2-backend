@@ -21,87 +21,55 @@ const getAll = (req, res) => {
         })
 }
 
-// const create = (req, res) => {
-
-//     let crop = new Crop();
-
-//     crop.name = req.body.name;
-//     //planting date and harvest date are not required
-//     crop.fieldId = req.body.fieldId;
-//     // crop.farmId = req.body.farmId;
-
-//     crop.save()
-//         .then(doc => {
-//             return Field.findById(req.body.fieldId);
-//         })
-//         .then(field => {
-//             field.crops.push(crop._id);
-//             return field.save();
-//         })
-//         .then(updatedField => {
-//             res.json({
-//                 "status": "success",
-//                 "message": "Gewas is toegevoegd en Field is bijgewerkt",
-//                 "data": {
-//                     "crop": crop,
-//                     "field": updatedField
-//                 }
-//             });
-//         })
-//         .catch(err => {
-//             res.json({
-//                 "status": "error",
-//                 "message": "Gewas kon niet worden toegevoegd",
-//                 "error": err
-//             });
-//         });
-// };
-
 const create = (req, res) => {
-    const crops = req.body.crops; // Ontvang de array met gewassen uit de payload
-  
-    const promises = crops.map(cropData => {
-      const crop = new Crop();
-      crop.name = cropData.name;
-      crop.fieldId = cropData.fieldId;
-  
-      return crop.save()
-        .then(doc => {
-          return Field.findById(cropData.fieldId);
-        })
-        .then(field => {
-          field.crops.push(crop._id);
-          return field.save();
-        })
-        .then(updatedField => {
-          return {
-            crop: crop,
-            field: updatedField
-          };
+    const cropsData = req.body.crops; // Ontvang de array van gewassenobjecten uit de payload
+
+    // Maak een array aan om de promises voor het opslaan van gewassen en bijwerken van velden bij te houden
+    const promises = [];
+
+    // Itereer over elk gewasobject in de cropsData array
+    cropsData.forEach(cropData => {
+        let crop = new Crop();
+        crop.name = cropData.name;
+        crop.fieldId = cropData.fieldId;
+
+        // Maak een promise aan voor het opslaan van het gewas
+        const cropPromise = crop.save()
+            .then(savedCrop => {
+                // Zoek het veld op basis van fieldId en update de crops array
+                return Field.findById(cropData.fieldId)
+                    .then(field => {
+                        field.crops.push({
+                            _id: savedCrop._id,
+                            name: savedCrop.name
+                        });
+                        return field.save();
+                    });
+            });
+
+        promises.push(cropPromise);
+    });
+
+    // Wacht tot alle promises zijn voltooid
+    Promise.all(promises)
+        .then(() => {
+            res.json({
+                "status": "success",
+                "message": "Gewassen zijn toegevoegd en velden zijn bijgewerkt",
+                "data": {
+                    "crops": cropsData
+                }
+            });
         })
         .catch(err => {
-          throw err; // Laat de fout doorwerken naar de buitenste catch-blok
+            res.json({
+                "status": "error",
+                "message": "Gewassen konden niet worden toegevoegd of velden konden niet worden bijgewerkt",
+                "error": err
+            });
         });
-    });
-  
-    Promise.all(promises)
-      .then(results => {
-        res.json({
-          "status": "success",
-          "message": "Gewassen zijn toegevoegd en Fields zijn bijgewerkt",
-          "data": results
-        });
-      })
-      .catch(err => {
-        res.json({
-          "status": "error",
-          "message": "Gewassen konden niet worden toegevoegd",
-          "error": err
-        });
-      });
-  };
-  
- 
+};
+
 
 const getById = (req, res) => {
     Crop.findOne({ _id: req.params.id })

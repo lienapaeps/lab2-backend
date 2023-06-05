@@ -28,10 +28,16 @@ const fieldSchema = new Schema ({
         type: Number,
         required: true
     },
-    crops: [ {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Crop',
-    }],
+    crops: [{
+        _id: {
+            type: Schema.Types.ObjectId,
+            ref: 'Crop'
+        },
+        name: {
+            type: String,
+            // required: true
+        }
+      }]
 })
 
 const Field = mongoose.model('Field', fieldSchema);
