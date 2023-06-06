@@ -114,38 +114,46 @@ const update = (req, res) => {
       });
   };
 
-const updateDate = (req, res) => {
+  const updateDate = (req, res) => {
     let cropId = req.params.id;
     let plantingDate = new Date(req.body.plantingDate);
-
+  
     Crop.findById(cropId)
-        .then(crop => {
-            if (!crop) {
-                return res.status(404).json({ error: 'Crop not found' });
-            }
-
-            crop.plantingDate = plantingDate;
-
-            const minGrowthDays = 30;
-            const maxGrowthDays = 90;
-            const estimatedGrowthDays = Math.floor(Math.random() * (maxGrowthDays - minGrowthDays + 1)) + minGrowthDays;
-
-            // Bereken harvestDate op basis van plantingDate en geschatte groeitijd
-            let harvestDate = new Date(plantingDate);
-            harvestDate.setDate(plantingDate.getDate() + estimatedGrowthDays);
-
-            crop.harvestDate = harvestDate;
-
-            return crop.save();
-        })
-        .then(updatedCrop => {
-            return res.status(200).json({ message: 'Planting date is succesvol opgeslagen', crop: updatedCrop });
-        })
-        .catch(error => {
-            console.error(error);
-            return res.status(500).json({ error: 'Internal server error' });
-        });
-};
+      .then(crop => {
+        if (!crop) {
+          return res.status(404).json({ error: 'Crop not found' });
+        }
+  
+        crop.plantingDate = plantingDate;
+  
+        const minGrowthDays = 30;
+        const maxGrowthDays = 80;
+        const estimatedGrowthDays = Math.floor(Math.random() * (maxGrowthDays - minGrowthDays + 1)) + minGrowthDays;
+  
+        // Bereken harvestDate op basis van plantingDate en geschatte groeitijd
+        let harvestDate = new Date(plantingDate);
+        harvestDate.setDate(plantingDate.getDate() + estimatedGrowthDays);
+  
+        crop.harvestDate = harvestDate;
+  
+        // Bereken en update growthStage
+        const currentDate = new Date();
+        const totalDuration = harvestDate - plantingDate;
+        const progress = Math.min(Math.max(currentDate - plantingDate, 0), totalDuration);
+        const percentage = (progress / totalDuration) * 100;
+        crop.growthStage = Math.round(percentage);
+  
+        return crop.save();
+      })
+      .then(updatedCrop => {
+        return res.status(200).json({ message: 'Planting date is succesvol opgeslagen', crop: updatedCrop });
+      })
+      .catch(error => {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal server error' });
+      });
+  };
+  
   
 const getById = (req, res) => {
     Crop.findOne({ _id: req.params.id })
