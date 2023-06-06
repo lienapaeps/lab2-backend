@@ -23,23 +23,22 @@ const cropsSchema = new Schema ({
     }
 })
 
-cropsSchema.virtual('growthStage').get(function () {
+cropsSchema.pre('update', function () {
     const currentDate = new Date();
-    const plantingDate = this.plantingDate;
-    const harvestDate = this.harvestDate;
+    const plantingDate = this.getUpdate().$set.plantingDate;
+    const harvestDate = this.getUpdate().$set.harvestDate;
   
-    if (!plantingDate || !harvestDate) {
-      return 0; // Als plantingDate of harvestDate niet is ingesteld, is de groeifase 0%
+    if (plantingDate && harvestDate) {
+      const totalDuration = harvestDate - plantingDate;
+      const progress = Math.min(Math.max(currentDate - plantingDate, 0), totalDuration);
+      const percentage = (progress / totalDuration) * 100;
+  
+      this.setUpdate({ $set: { growthStage: Math.round(percentage) } });
+    } else {
+      this.setUpdate({ $set: { growthStage: 0 } });
     }
-  
-    const totalDuration = harvestDate - plantingDate;
-    const progress = Math.min(Math.max(currentDate - plantingDate, 0), totalDuration);
-    const percentage = (progress / totalDuration) * 100;
-  
-    return Math.round(percentage); // Afgerond percentage van de groeifase
   });
-
-  cropsSchema.set('toJSON', { virtuals: true });
+  
 
 const Crop = mongoose.model('Crop', cropsSchema);
 
