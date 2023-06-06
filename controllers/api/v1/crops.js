@@ -70,6 +70,57 @@ const create = (req, res) => {
         });
 };
 
+const update = (req, res) => {
+    const fieldId = req.params.id; // Ontvang het veldId uit de route parameters
+    const cropsData = req.body.crops; // Ontvang de array van gewassenobjecten uit de payload
+  
+    // Zoek het veld op basis van het veldId
+    Field.findById(fieldId)
+      .then(field => {
+        // Itereer over elk gewasobject in de cropsData array
+        cropsData.forEach(cropData => {
+          const cropId = cropData._id;
+          const cropName = cropData.name;
+  
+          // Zoek het gewas in de crops array van het veld op basis van het cropId
+          const crop = field.crops.find(c => c._id.toString() === cropId);
+  
+          if (crop) {
+            // Als het gewas is gevonden, update de naam van het gewas
+            crop.name = cropName;
+  
+            // Controleer of het gewas ook gepland is
+            const plannedCrop = field.plannedCrops.find(pc => pc._id.toString() === cropId);
+  
+            if (plannedCrop) {
+              // Als het gewas ook gepland is, update de naam van het geplande gewas
+              plannedCrop.name = cropName;
+            }
+          }
+        });
+  
+        // Sla het veld op met de bijgewerkte gewassen en geplande gewassen
+        return field.save();
+      })
+      .then(updatedField => {
+        res.json({
+          status: "success",
+          message: "Gewassen en geplande gewassen zijn bijgewerkt",
+          data: {
+            field: updatedField
+          }
+        });
+      })
+      .catch(err => {
+        res.json({
+          status: "error",
+          message: "Gewassen en geplande gewassen konden niet worden bijgewerkt",
+          error: err
+        });
+      });
+  };
+  
+  
 
 const getById = (req, res) => {
     Crop.findOne({ _id: req.params.id })
@@ -95,3 +146,4 @@ const getById = (req, res) => {
 module.exports.getAll = getAll;
 module.exports.create = create;
 module.exports.getById = getById;
+module.exports.update = update;

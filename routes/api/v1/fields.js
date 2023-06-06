@@ -17,8 +17,11 @@ router.get('/user/:id', fieldsController.getByUserId);
 // create field
 router.post("/", fieldsController.create);
 
+// update/hire field by id
+router.put('/hire/:id', fieldsController.hire); 
+
 // update field by id
-router.put('/:id', fieldsController.update); 
+router.put('/update/:id', fieldsController.update);
 
 // delete field by id
 router.delete('/:id', fieldsController.remove);

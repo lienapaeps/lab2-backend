@@ -11,9 +11,8 @@ router.get('/:id', cropsController.getById);
 // create crop
 router.post("/", cropsController.create);
 
-
 // update crop
-// router.put('/:id', cropsController.update);
+router.put('/:id', cropsController.update);
 
 // delete crop
 // router.delete('/:id', cropsController.delete);
