@@ -22,18 +22,16 @@ const getAll = (req, res) => {
 }
 
 const create = (req, res) => {
-    const cropsData = req.body.crops; // Ontvang de array van gewassenobjecten uit de payload
+    const cropsData = req.body.crops;
 
     // Maak een array aan om de promises voor het opslaan van gewassen en bijwerken van velden bij te houden
     const promises = [];
 
-    // Itereer over elk gewasobject in de cropsData array
     cropsData.forEach(cropData => {
         let crop = new Crop();
         crop.name = cropData.name;
         crop.fieldId = cropData.fieldId;
 
-        // Maak een promise aan voor het opslaan van het gewas
         const cropPromise = crop.save()
             .then(savedCrop => {
                 // Zoek het veld op basis van fieldId en update de crops array
@@ -50,7 +48,6 @@ const create = (req, res) => {
         promises.push(cropPromise);
     });
 
-    // Wacht tot alle promises zijn voltooid
     Promise.all(promises)
         .then(() => {
             res.json({
@@ -71,13 +68,12 @@ const create = (req, res) => {
 };
 
 const update = (req, res) => {
-    const fieldId = req.params.id; // Ontvang het veldId uit de route parameters
-    const cropsData = req.body.crops; // Ontvang de array van gewassenobjecten uit de payload
+    const fieldId = req.params.id; 
+    const cropsData = req.body.crops; 
   
     // Zoek het veld op basis van het veldId
     Field.findById(fieldId)
       .then(field => {
-        // Itereer over elk gewasobject in de cropsData array
         cropsData.forEach(cropData => {
           const cropId = cropData._id;
           const cropName = cropData.name;
@@ -93,13 +89,11 @@ const update = (req, res) => {
             const plannedCrop = field.plannedCrops.find(pc => pc._id.toString() === cropId);
   
             if (plannedCrop) {
-              // Als het gewas ook gepland is, update de naam van het geplande gewas
               plannedCrop.name = cropName;
             }
           }
         });
   
-        // Sla het veld op met de bijgewerkte gewassen en geplande gewassen
         return field.save();
       })
       .then(updatedField => {
@@ -119,9 +113,40 @@ const update = (req, res) => {
         });
       });
   };
-  
-  
 
+const updateDate = (req, res) => {
+    let cropId = req.params.id;
+    let plantingDate = new Date(req.body.plantingDate);
+
+    Crop.findById(cropId)
+        .then(crop => {
+            if (!crop) {
+                return res.status(404).json({ error: 'Crop not found' });
+            }
+
+            crop.plantingDate = plantingDate;
+
+            const minGrowthDays = 30;
+            const maxGrowthDays = 90;
+            const estimatedGrowthDays = Math.floor(Math.random() * (maxGrowthDays - minGrowthDays + 1)) + minGrowthDays;
+
+            // Bereken harvestDate op basis van plantingDate en geschatte groeitijd
+            let harvestDate = new Date(plantingDate);
+            harvestDate.setDate(plantingDate.getDate() + estimatedGrowthDays);
+
+            crop.harvestDate = harvestDate;
+
+            return crop.save();
+        })
+        .then(updatedCrop => {
+            return res.status(200).json({ message: 'Planting date is succesvol opgeslagen', crop: updatedCrop });
+        })
+        .catch(error => {
+            console.error(error);
+            return res.status(500).json({ error: 'Internal server error' });
+        });
+};
+  
 const getById = (req, res) => {
     Crop.findOne({ _id: req.params.id })
         .then(doc => {
@@ -147,3 +172,4 @@ module.exports.getAll = getAll;
 module.exports.create = create;
 module.exports.getById = getById;
 module.exports.update = update;
+module.exports.updateDate = updateDate;

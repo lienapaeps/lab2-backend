@@ -126,9 +126,8 @@ const hire = async (req, res) => {
 };
 
 const update = (req, res) => {
-  const fieldId = req.params.id; // Ontvang het veldId uit de route parameters
-  const { name, size } = req.body; // Ontvang de gewijzigde naam en grootte van het veld uit de payload
-
+  const fieldId = req.params.id; 
+  const { name, size } = req.body; 
   // Zoek het veld op basis van het veldId
   Field.findById(fieldId)
     .then(field => {
@@ -136,11 +135,9 @@ const update = (req, res) => {
         throw new Error('Veld niet gevonden');
       }
 
-      // Bijwerken van de naam en grootte van het veld
       field.name = name;
       field.size = size;
 
-      // Sla het veld op met de bijgewerkte gegevens
       return field.save();
     })
     .then(updatedField => {
