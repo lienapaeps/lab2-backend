@@ -17,9 +17,10 @@ const cropsSchema = new Schema ({
     fieldId: {
         type: String
     },
-    // farmId: {
-    //     type: String
-    // },
+    growthStage: {
+        type: Number,
+        default: null
+    }
 })
 
 cropsSchema.virtual('growthStage').get(function () {
@@ -37,6 +38,8 @@ cropsSchema.virtual('growthStage').get(function () {
   
     return Math.round(percentage); // Afgerond percentage van de groeifase
   });
+
+  cropsSchema.set('toJSON', { virtuals: true });
 
 const Crop = mongoose.model('Crop', cropsSchema);
 
