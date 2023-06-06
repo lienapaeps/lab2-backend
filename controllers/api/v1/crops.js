@@ -127,7 +127,7 @@ const update = (req, res) => {
         crop.plantingDate = plantingDate;
   
         const minGrowthDays = 30;
-        const maxGrowthDays = 80;
+        const maxGrowthDays = 90;
         const estimatedGrowthDays = Math.floor(Math.random() * (maxGrowthDays - minGrowthDays + 1)) + minGrowthDays;
   
         // Bereken harvestDate op basis van plantingDate en geschatte groeitijd
@@ -136,23 +136,36 @@ const update = (req, res) => {
   
         crop.harvestDate = harvestDate;
   
-        // Bereken en update growthStage
-        const currentDate = new Date();
-        const totalDuration = harvestDate - plantingDate;
-        const progress = Math.min(Math.max(currentDate - plantingDate, 0), totalDuration);
-        const percentage = (progress / totalDuration) * 100;
-        crop.growthStage = Math.round(percentage);
+        // Start de interval-functie om de growthStage periodiek bij te werken
+        const updateInterval = setInterval(() => {
+          const currentDate = new Date();
+          const elapsedDays = Math.floor((currentDate - plantingDate) / (1000 * 60 * 60 * 24));
+          const totalDuration = estimatedGrowthDays;
+          const progress = Math.min(Math.max(elapsedDays, 0), totalDuration);
+          const percentage = (progress / totalDuration) * 100;
+          crop.growthStage = Math.round(percentage);
+  
+          crop.save()
+            .catch(error => {
+              console.error(error);
+            });
+  
+          // Controleer of de groei is voltooid
+          if (crop.growthStage >= 100) {
+            clearInterval(updateInterval);
+          }
+        }, 24 * 60 * 60 * 1000); // Update de growthStage elke 24 uur
   
         return crop.save();
       })
       .then(updatedCrop => {
-        return res.status(200).json({ message: 'Planting date is succesvol opgeslagen', crop: updatedCrop });
+        return res.status(200).json({ message: 'Planting date is successfully updated', crop: updatedCrop });
       })
       .catch(error => {
         console.error(error);
         return res.status(500).json({ error: 'Internal server error' });
       });
-  };
+  };  
   
   
 const getById = (req, res) => {

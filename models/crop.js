@@ -23,10 +23,10 @@ const cropsSchema = new Schema ({
     }
 })
 
-cropsSchema.pre('update', function() {
+cropsSchema.pre('save', function(next) {
     const currentDate = new Date();
-    const plantingDate = this.getUpdate().$set.plantingDate;
-    const harvestDate = this.getUpdate().$set.harvestDate;
+    const plantingDate = this.plantingDate;
+    const harvestDate = this.harvestDate;
   
     if (plantingDate && harvestDate) {
       const totalDuration = harvestDate - plantingDate;
@@ -34,14 +34,14 @@ cropsSchema.pre('update', function() {
       const percentage = (progress / totalDuration) * 100;
   
       // Rond het percentage af op het dichtstbijzijnde gehele getal
-      this.setUpdate({ $set: { growthStage: Math.round(percentage) } });
+      this.growthStage = Math.round(percentage);
     } else {
-      this.setUpdate({ $set: { growthStage: 0 } });
+      this.growthStage = 0;
     }
+  
+    next();
   });
-  
-  
-
+   
 const Crop = mongoose.model('Crop', cropsSchema);
 
 module.exports = Crop;
