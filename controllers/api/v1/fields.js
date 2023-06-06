@@ -246,6 +246,22 @@ const getByUserId = (req, res) => {
         })
 }
 
+const removeFieldAndCrops = async (req, res) => {
+  try {
+    const fieldId = req.params.id;
+
+    // Verwijder het veld
+    await Field.findByIdAndDelete(fieldId);
+
+    // Verwijder de bijbehorende crops
+    await Crop.deleteMany({ fieldId });
+
+    res.json({ message: 'Veld en bijbehorende crops zijn succesvol verwijderd' });
+  } catch (error) {
+    res.status(500).json({ error: 'Er is een fout opgetreden bij het verwijderen van het veld en de crops' });
+  }
+};
+
 module.exports.getAll = getAll;
 module.exports.create = create;
 module.exports.getById = getById;
@@ -254,3 +270,4 @@ module.exports.hire = hire;
 module.exports.remove = remove;
 module.exports.getByUserId = getByUserId;
 module.exports.update = update;
+module.exports.removeFieldAndCrops = removeFieldAndCrops;

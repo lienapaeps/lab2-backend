@@ -26,4 +26,7 @@ router.put('/update/:id', fieldsController.update);
 // delete field by id
 router.delete('/:id', fieldsController.remove);
 
+// delete field and crops by id
+router.delete('/delete/:id', fieldsController.removeFieldAndCrops);
+
 module.exports = router;
