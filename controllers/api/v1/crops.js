@@ -168,8 +168,30 @@ const getById = (req, res) => {
         )
 }
 
+const remove = (req, res) => {
+    Crop.deleteOne({ _id: req.params.id })
+        .then(doc => {
+            res.json({
+                "status": "success",
+                "message": "Gewas verwijderd",
+                "data": {
+                    "crop": doc
+                }
+            })
+        })
+        .catch(err => {
+            res.json({
+                "status": "error",
+                "message": "Gewas niet verwijderd",
+                "error": err
+            })
+        }
+        )
+}
+
 module.exports.getAll = getAll;
 module.exports.create = create;
 module.exports.getById = getById;
 module.exports.update = update;
 module.exports.updateDate = updateDate;
+module.exports.remove = remove;

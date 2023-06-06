@@ -18,6 +18,6 @@ router.put('/:id', cropsController.update);
 router.put('/date/:id', cropsController.updateDate);
 
 // delete crop
-// router.delete('/:id', cropsController.delete);
+router.delete('/:id', cropsController.remove);
 
 module.exports = router;
