@@ -126,8 +126,8 @@ const update = (req, res) => {
   
         crop.plantingDate = plantingDate;
   
-        const minGrowthDays = 30;
-        const maxGrowthDays = 90;
+        const minGrowthDays = 5;
+        const maxGrowthDays = 20;
         const estimatedGrowthDays = Math.floor(Math.random() * (maxGrowthDays - minGrowthDays + 1)) + minGrowthDays;
   
         // Bereken harvestDate op basis van plantingDate en geschatte groeitijd
