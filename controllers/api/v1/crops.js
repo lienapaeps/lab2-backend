@@ -145,6 +145,9 @@ const update = (req, res) => {
           const percentage = (progress / totalDuration) * 100;
           crop.growthStage = Math.round(percentage);
   
+          console.log("interval functie werkt");
+          console.log(crop.growthStage + "%");
+  
           crop.save()
             .catch(error => {
               console.error(error);
@@ -165,7 +168,7 @@ const update = (req, res) => {
         console.error(error);
         return res.status(500).json({ error: 'Internal server error' });
       });
-  };  
+  }; 
   
   
 const getById = (req, res) => {

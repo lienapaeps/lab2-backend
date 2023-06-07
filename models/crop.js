@@ -19,7 +19,7 @@ const cropsSchema = new Schema ({
     },
     growthStage: {
         type: Number,
-        default: null
+        default: 0
     }
 })
 
