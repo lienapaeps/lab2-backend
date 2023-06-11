@@ -114,62 +114,123 @@ const update = (req, res) => {
       });
   };
 
-  const updateDate = (req, res) => {
-    let cropId = req.params.id;
-    let plantingDate = new Date(req.body.plantingDate);
+  // const updateDate = (req, res) => {
+  //   let cropId = req.params.id;
+  //   let plantingDate = new Date(req.body.plantingDate);
   
-    Crop.findById(cropId)
-      .then(crop => {
-        if (!crop) {
-          return res.status(404).json({ error: 'Crop not found' });
-        }
+  //   Crop.findById(cropId)
+  //     .then(crop => {
+  //       if (!crop) {
+  //         return res.status(404).json({ error: 'Crop not found' });
+  //       }
   
-        crop.plantingDate = plantingDate;
+  //       crop.plantingDate = plantingDate;
   
-        const minGrowthDays = 5;
-        const maxGrowthDays = 20;
-        const estimatedGrowthDays = Math.floor(Math.random() * (maxGrowthDays - minGrowthDays + 1)) + minGrowthDays;
+  //       const minGrowthDays = 5;
+  //       const maxGrowthDays = 20;
+  //       const estimatedGrowthDays = Math.floor(Math.random() * (maxGrowthDays - minGrowthDays + 1)) + minGrowthDays;
   
-        // Bereken harvestDate op basis van plantingDate en geschatte groeitijd
-        let harvestDate = new Date(plantingDate);
-        harvestDate.setDate(plantingDate.getDate() + estimatedGrowthDays);
+  //       // Bereken harvestDate op basis van plantingDate en geschatte groeitijd
+  //       let harvestDate = new Date(plantingDate);
+  //       harvestDate.setDate(plantingDate.getDate() + estimatedGrowthDays);
   
-        crop.harvestDate = harvestDate;
+  //       crop.harvestDate = harvestDate;
   
-        // Start de interval-functie om de growthStage periodiek bij te werken
-        const updateInterval = setInterval(() => {
-          const currentDate = new Date();
-          const elapsedDays = Math.floor((currentDate - plantingDate) / (1000 * 60 * 60 * 24));
-          const totalDuration = estimatedGrowthDays;
-          const progress = Math.min(Math.max(elapsedDays, 0), totalDuration);
-          const percentage = (progress / totalDuration) * 100;
-          crop.growthStage = Math.round(percentage);
+  //       // Start de interval-functie om de growthStage periodiek bij te werken
+  //       const updateInterval = setInterval(() => {
+  //         const currentDate = new Date();
+  //         const elapsedDays = Math.floor((currentDate - plantingDate) / (1000 * 60 * 60 * 24));
+  //         const totalDuration = estimatedGrowthDays;
+  //         const progress = Math.min(Math.max(elapsedDays, 0), totalDuration);
+  //         const percentage = (progress / totalDuration) * 100;
+  //         crop.growthStage = Math.round(percentage);
   
-          console.log("interval functie werkt");
-          console.log(crop.growthStage + "%");
+  //         console.log("interval functie werkt");
+  //         console.log(crop.growthStage + "%");
   
-          crop.save()
-            .catch(error => {
-              console.error(error);
-            });
+  //         crop.save()
+  //           .catch(error => {
+  //             console.error(error);
+  //           });
   
-          // Controleer of de groei is voltooid
-          if (crop.growthStage >= 100) {
-            clearInterval(updateInterval);
-          }
-        }, 24 * 60 * 60 * 1000); // Update de growthStage elke 24 uur
+  //         // Controleer of de groei is voltooid
+  //         if (crop.growthStage >= 100) {
+  //           clearInterval(updateInterval);
+  //         }
+  //       }, 24 * 60 * 60 * 1000); // Update de growthStage elke 24 uur
   
-        return crop.save();
-      })
-      .then(updatedCrop => {
-        return res.status(200).json({ message: 'Planting date is successfully updated', crop: updatedCrop });
-      })
+  //       return crop.save();
+  //     })
+  //     .then(updatedCrop => {
+  //       return res.status(200).json({ message: 'Planting date is successfully updated', crop: updatedCrop });
+  //     })
+  //     .catch(error => {
+  //       console.error(error);
+  //       return res.status(500).json({ error: 'Internal server error' });
+  //     });
+  // }; 
+
+const updateDate = (req, res) => {
+  let cropId = req.params.id;
+  let plantingDate = new Date(req.body.plantingDate);
+
+  Crop.findById(cropId)
+    .then(crop => {
+      if (!crop) {
+        return res.status(404).json({ error: 'Crop not found' });
+      }
+
+      crop.plantingDate = plantingDate;
+
+      const minGrowthDays = 5;
+      const maxGrowthDays = 20;
+      const estimatedGrowthDays = Math.floor(Math.random() * (maxGrowthDays - minGrowthDays + 1)) + minGrowthDays;
+
+      let harvestDate = new Date(plantingDate);
+      harvestDate.setDate(plantingDate.getDate() + estimatedGrowthDays);
+
+      crop.harvestDate = harvestDate;
+
+      crop.save()
+        .then(updatedCrop => {
+          startGrowthStageUpdateInterval(updatedCrop); 
+          return res.status(200).json({ message: 'Planting date is successfully updated', crop: updatedCrop });
+        })
+        .catch(error => {
+          console.error(error);
+          return res.status(500).json({ error: 'Internal server error' });
+        });
+    })
+    .catch(error => {
+      console.error(error);
+      return res.status(500).json({ error: 'Internal server error' });
+    });
+};
+
+// periodiek bijwerken
+const startGrowthStageUpdateInterval = (crop) => {
+  const updateInterval = setInterval(() => {
+    const currentDate = new Date();
+    const elapsedDays = Math.floor((currentDate - crop.plantingDate) / (1000 * 60 * 60 * 24));
+    const totalDuration = Math.floor((crop.harvestDate - crop.plantingDate) / (1000 * 60 * 60 * 24));
+    const progress = Math.min(Math.max(elapsedDays, 0), totalDuration);
+    const percentage = (progress / totalDuration) * 100;
+    crop.growthStage = Math.round(percentage);
+
+    console.log("GrowthStage bijgewerkt:", crop.growthStage + "%");
+
+    crop.save()
       .catch(error => {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal server error' });
+        console.error("Fout bij het bijwerken van GrowthStage:", error);
       });
-  }; 
-  
+
+    // Controleer of de groei is voltooid
+    if (crop.growthStage >= 100) {
+      clearInterval(updateInterval);
+    }
+  }, 24 * 60 * 60 * 1000); // Update elke 24 uur
+};
+ 
   
 const getById = (req, res) => {
     Crop.findOne({ _id: req.params.id })
