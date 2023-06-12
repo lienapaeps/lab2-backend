@@ -208,28 +208,33 @@ const updateDate = (req, res) => {
 };
 
 // periodiek bijwerken
-const startGrowthStageUpdateInterval = (crop) => {
-  const updateInterval = setInterval(() => {
+const startGrowthStageUpdateInterval = async (crop) => {
+  const updateInterval = setInterval(async () => {
+    // Bereken de groei
     const currentDate = new Date();
-    const elapsedDays = Math.floor((currentDate - crop.plantingDate) / (1000 * 60 * 60 * 24));
-    const totalDuration = Math.floor((crop.harvestDate - crop.plantingDate) / (1000 * 60 * 60 * 24));
+    const plantingDate = crop.plantingDate;
+    const harvestDate = crop.harvestDate;
+    const elapsedDays = Math.floor((currentDate - plantingDate) / (1000 * 60 * 60 * 24));
+    const totalDuration = Math.floor((harvestDate - plantingDate) / (1000 * 60 * 60 * 24));
     const progress = Math.min(Math.max(elapsedDays, 0), totalDuration);
     const percentage = (progress / totalDuration) * 100;
     crop.growthStage = Math.round(percentage);
 
     console.log("GrowthStage bijgewerkt:", crop.growthStage + "%");
 
-    crop.save()
-      .catch(error => {
-        console.error("Fout bij het bijwerken van GrowthStage:", error);
-      });
+    try {
+      await crop.save();
 
-    // Controleer of de groei is voltooid
-    if (crop.growthStage >= 100) {
-      clearInterval(updateInterval);
+      // Controleer of de groei is voltooid
+      if (crop.growthStage >= 100) {
+        clearInterval(updateInterval);
+      }
+    } catch (error) {
+      console.error("Fout bij het bijwerken van GrowthStage:", error);
     }
   }, 24 * 60 * 60 * 1000); // Update elke 24 uur
 };
+
  
   
 const getById = (req, res) => {
