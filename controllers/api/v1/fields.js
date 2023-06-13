@@ -307,7 +307,6 @@ const getPlannedCropByUserId = async (req, res) => {
   }
 };
 
-
 module.exports.getAll = getAll;
 module.exports.create = create;
 module.exports.getById = getById;
