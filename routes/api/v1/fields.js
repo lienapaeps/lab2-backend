@@ -29,7 +29,4 @@ router.delete('/:id', fieldsController.remove);
 // delete field and crops by id
 router.delete('/delete/:id', fieldsController.removeFieldAndCrops);
 
-// get planned crops by user id
-router.get('/planned/:id', fieldsController.getPlannedCropByUserId);
-
 module.exports = router;
