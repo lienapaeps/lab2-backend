@@ -102,7 +102,8 @@ const hire = async (req, res) => {
           $push: {
             plannedCrops: {
               _id: existingCrop._id,
-              name: existingCrop.name
+              name: existingCrop.name,
+              userId: userId
             }
           }
         },
@@ -262,6 +263,51 @@ const removeFieldAndCrops = async (req, res) => {
   }
 };
 
+const getPlannedCropByUserId = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const field = await Field.findOne({ "owner.id": userId });
+
+    if (!field) {
+      return res.json({
+        status: "error",
+        message: "Veld niet gevonden voor de opgegeven gebruiker."
+      });
+    }
+
+    if (!field.owner.some(owner => owner.id === userId)) {
+      return res.json({
+        status: "error",
+        message: "Je bent geen eigenaar van dit veld."
+      });
+    }
+
+    const plannedCrop = field.plannedCrops.find(crop => crop.userId === userId);
+
+    if (!plannedCrop) {
+      return res.json({
+        status: "error",
+        message: "Geen gepland gewas gevonden voor de opgegeven gebruiker."
+      });
+    }
+
+    res.json({
+      status: "success",
+      data: {
+        plannedCrop
+      }
+    });
+  } catch (err) {
+    res.json({
+      status: "error",
+      message: "Er is een fout opgetreden.",
+      error: err
+    });
+  }
+};
+
+
 module.exports.getAll = getAll;
 module.exports.create = create;
 module.exports.getById = getById;
@@ -271,3 +317,4 @@ module.exports.remove = remove;
 module.exports.getByUserId = getByUserId;
 module.exports.update = update;
 module.exports.removeFieldAndCrops = removeFieldAndCrops;
+module.exports.getPlannedCropByUserId = getPlannedCropByUserId;
