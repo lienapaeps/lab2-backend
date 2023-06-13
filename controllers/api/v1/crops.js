@@ -214,11 +214,11 @@ const startGrowthStageUpdateInterval = async (crop) => {
     const currentDate = new Date();
     const plantingDate = crop.plantingDate;
     const harvestDate = crop.harvestDate;
-    const elapsedDays = Math.floor((currentDate - plantingDate) / (1000 * 60 * 60 * 24));
-    const totalDuration = Math.floor((harvestDate - plantingDate) / (1000 * 60 * 60 * 24));
-    const progress = Math.min(Math.max(elapsedDays, 0), totalDuration);
-    const percentage = (progress / totalDuration) * 100;
-    crop.growthStage = Math.round(percentage);
+    const totalDuration = harvestDate - plantingDate;
+    const elapsedDuration = currentDate - plantingDate;
+    const percentage = Math.round((elapsedDuration / totalDuration) * 100);
+
+    crop.growthStage = Math.min(Math.max(percentage, 0), 100);
 
     console.log("GrowthStage bijgewerkt:", crop.growthStage + "%");
 
@@ -234,9 +234,7 @@ const startGrowthStageUpdateInterval = async (crop) => {
     }
   }, 24 * 60 * 60 * 1000); // Update elke 24 uur
 };
-
  
-  
 const getById = (req, res) => {
     Crop.findOne({ _id: req.params.id })
         .then(doc => {
